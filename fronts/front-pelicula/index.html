@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <title>Detalle de película</title>
+        <style>
+            body {
+                background: #f5f6fa;
+                font-family: Arial, sans-serif;
+                color: #2d3436;
+                margin: 0;
+            }
+            nav {
+                background: #2d3436;
+                color: #fff;
+                padding: 1rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            nav a {
+                color: #fff;
+                text-decoration: none;
+                margin-left: 1.2rem;
+            }
+            nav a:hover {
+                color: #74b9ff;
+            }
+            .contenedor {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            .volver {
+                display: inline-block;
+                margin-bottom: 1rem;
+                color: #3498db;
+                text-decoration: none;
+            }
+            .detalle {
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                padding: 1.5rem 2rem;
+                max-width: 500px;
+            }
+            .detalle p {
+                margin: 0.4rem 0;
+            }
+            .etiqueta {
+                font-weight: 600;
+                display: inline-block;
+                width: 130px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <span>🎬 Catálogo de películas</span>
+            <div>
+                <a href="/peliculas">Items</a>
+                <a href="/procedimiento">Procedimiento</a>
+                <a href="/cerrar-sesion">Cerrar sesión</a>
+            </div>
+        </nav>
+
+        <div class="contenedor">
+            <a class="volver" href="/peliculas">&larr; Volver al listado</a>
+            <h1>Detalle de la película</h1>
+            <div class="detalle" id="detalle">
+                <p>Cargando...</p>
+            </div>
+        </div>
+
+        <script>
+            // Leemos el "id" desde la query string de la URL (?id=...)
+            // que se construyó en la página de Items.
+            const parametros = new URLSearchParams(window.location.search)
+            const id = parametros.get('id')
+            const detalle = document.getElementById('detalle')
+
+            if (!id) {
+                detalle.innerHTML = '<p>No se especificó un id de película.</p>'
+            } else {
+                // Construimos el endpoint con el id recibido por parámetro
+                fetch(`/api/v1/peliculas/${id}`).then((response) => {
+                    if (response.status === 401) {
+                        window.location.href = '/login'
+                        return
+                    }
+
+                    if (response.status === 400) {
+                        detalle.innerHTML = `<p>El id "${id}" no es válido.</p>`
+                        return
+                    }
+
+                    if (response.status === 404) {
+                        detalle.innerHTML = `<p>No se encontró una película con id ${id}.</p>`
+                        return
+                    }
+
+                    if (!response.ok) {
+                        detalle.innerHTML = '<p>Ocurrió un error al cargar la película.</p>'
+                        return
+                    }
+
+                    response.json().then((cuerpo) => {
+                        const pelicula = cuerpo.datos[0]
+
+                        detalle.innerHTML = `
+                            <p><span class="etiqueta">Título:</span> ${pelicula.titulo}</p>
+                            <p><span class="etiqueta">Director:</span> ${pelicula.director}</p>
+                            <p><span class="etiqueta">Año:</span> ${pelicula.año}</p>
+                            <p><span class="etiqueta">Género:</span> ${pelicula.genero}</p>
+                            <p><span class="etiqueta">Duración:</span> ${pelicula.duracion_min} min</p>
+                            <p><span class="etiqueta">Puntuación:</span> ${pelicula.puntuacion}</p>
+                        `
+                    })
+                })
+            }
+        </script>
+    </body>
+</html>

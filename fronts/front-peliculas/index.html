@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <title>Películas</title>
+        <style>
+            body {
+                background: #f5f6fa;
+                font-family: Arial, sans-serif;
+                color: #2d3436;
+                margin: 0;
+            }
+            nav {
+                background: #2d3436;
+                color: #fff;
+                padding: 1rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            nav a {
+                color: #fff;
+                text-decoration: none;
+                margin-left: 1.2rem;
+            }
+            nav a:hover {
+                color: #74b9ff;
+            }
+            .contenedor {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            .lista {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 1rem;
+            }
+            .tarjeta {
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                padding: 1rem 1.2rem;
+                text-decoration: none;
+                color: #2d3436;
+            }
+            .tarjeta h3 {
+                margin: 0 0 0.4rem 0;
+            }
+            .tarjeta p {
+                margin: 0.2rem 0;
+                font-size: 0.9rem;
+                color: #636e72;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <span>🎬 Catálogo de películas</span>
+            <div>
+                <a href="/peliculas">Items</a>
+                <a href="/procedimiento">Procedimiento</a>
+                <a href="/cerrar-sesion">Cerrar sesión</a>
+            </div>
+        </nav>
+
+        <div class="contenedor">
+            <h1>Listado de películas</h1>
+            <div class="lista" id="lista">
+                <p>Cargando películas...</p>
+            </div>
+        </div>
+
+        <script>
+            const lista = document.getElementById('lista')
+
+            // Pedimos al backend todas las películas.
+            // Al ser same-origin (mismo dominio y puerto), la cookie
+            // "token" se envía automáticamente con la petición.
+            fetch('/api/v1/peliculas').then((response) => {
+                // Si el token no es válido, el middleware del backend
+                // responde 401 y redirigimos al login manualmente
+                if (response.status === 401) {
+                    window.location.href = '/login'
+                    return
+                }
+
+                if (!response.ok) {
+                    lista.innerHTML = '<p>Ocurrió un error al cargar las películas.</p>'
+                    return
+                }
+
+                response.json().then((cuerpo) => {
+                    const datos = cuerpo.datos
+
+                    if (!datos || datos.length === 0) {
+                        lista.innerHTML = '<p>No hay películas para mostrar.</p>'
+                        return
+                    }
+
+                    // Construimos una tarjeta por cada película.
+                    // Cada tarjeta enlaza a /pelicula?id=<id> usando query strings,
+                    // así la página de detalle sabe qué película mostrar.
+                    lista.innerHTML = datos.map((pelicula) => `
+                        <a class="tarjeta" href="/pelicula?id=${pelicula.id}">
+                            <h3>${pelicula.titulo}</h3>
+                            <p>Director: ${pelicula.director}</p>
+                            <p>Año: ${pelicula.año} · Género: ${pelicula.genero}</p>
+                            <p>Puntuación: ${pelicula.puntuacion}</p>
+                        </a>
+                    `).join('')
+                })
+            })
+        </script>
+    </body>
+</html>

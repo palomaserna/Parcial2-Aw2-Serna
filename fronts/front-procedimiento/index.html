@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <title>Procedimiento - Películas destacadas</title>
+        <style>
+            body {
+                background: #f5f6fa;
+                font-family: Arial, sans-serif;
+                color: #2d3436;
+                margin: 0;
+            }
+            nav {
+                background: #2d3436;
+                color: #fff;
+                padding: 1rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            nav a {
+                color: #fff;
+                text-decoration: none;
+                margin-left: 1.2rem;
+            }
+            nav a:hover {
+                color: #74b9ff;
+            }
+            .contenedor {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            .descripcion {
+                background: #fff;
+                border-left: 4px solid #3498db;
+                padding: 1rem 1.2rem;
+                border-radius: 4px;
+                margin-bottom: 1.5rem;
+                font-size: 0.95rem;
+            }
+            button {
+                background: #27ae60;
+                color: #fff;
+                border: none;
+                padding: 0.8rem 1.5rem;
+                border-radius: 4px;
+                font-size: 1rem;
+                cursor: pointer;
+                margin-bottom: 1rem;
+            }
+            button:hover {
+                background: #1e8449;
+            }
+            .resultado {
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                padding: 1rem 1.2rem;
+                min-height: 2rem;
+            }
+            .exito {
+                color: #27ae60;
+                font-weight: 600;
+            }
+            .error {
+                color: #e74c3c;
+                font-weight: 600;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 0.5rem;
+            }
+            th {
+                text-align: left;
+                border-bottom: 2px solid #ddd;
+                padding: 0.3rem;
+            }
+            td {
+                padding: 0.3rem;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <span>🎬 Catálogo de películas</span>
+            <div>
+                <a href="/peliculas">Items</a>
+                <a href="/procedimiento">Procedimiento</a>
+                <a href="/cerrar-sesion">Cerrar sesión</a>
+            </div>
+        </nav>
+
+        <div class="contenedor">
+            <h1>Procedimiento: películas destacadas</h1>
+
+            <p class="descripcion">
+                Este procedimiento recorre el listado de películas y
+                devuelve únicamente aquellas cuya <strong>puntuación es mayor
+                a 8.7</strong>, ordenadas de mayor a menor puntuación.
+                Hacé clic en el botón para ejecutarlo.
+            </p>
+
+            <button id="boton">Ejecutar procedimiento</button>
+
+            <div class="resultado" id="resultado">
+                <p>Todavía no se ejecutó el procedimiento.</p>
+            </div>
+        </div>
+
+        <script>
+            const boton = document.getElementById('boton')
+            const resultado = document.getElementById('resultado')
+
+            boton.addEventListener('click', () => {
+                resultado.innerHTML = '<p>Ejecutando...</p>'
+
+                // Endpoint de procedimiento: está fuera del esquema /api/v1/
+                // a propósito, porque no respeta los principios de rutas REST
+                // (no representa un recurso, sino una acción).
+                fetch('/peliculas/destacadas').then((response) => {
+                    if (response.status === 401) {
+                        window.location.href = '/login'
+                        return
+                    }
+
+                    if (!response.ok) {
+                        resultado.innerHTML = '<p class="error">El procedimiento no se ejecutó correctamente.</p>'
+                        return
+                    }
+
+                    response.json().then((cuerpo) => {
+                        const datos = cuerpo.datos
+
+                        if (!datos || datos.length === 0) {
+                            resultado.innerHTML = `
+                                <p class="exito">Procedimiento ejecutado con éxito.</p>
+                                <p>No se encontraron películas destacadas (puntuación > 8.7).</p>
+                            `
+                            return
+                        }
+
+                        // Armamos una fila de tabla por cada película destacada
+                        const filas = datos.map((pelicula) => `
+                            <tr>
+                                <td>${pelicula.titulo}</td>
+                                <td>${pelicula.director}</td>
+                                <td>${pelicula.año}</td>
+                                <td>${pelicula.genero}</td>
+                                <td>${pelicula.puntuacion}</td>
+                            </tr>
+                        `).join('')
+
+                        resultado.innerHTML = `
+                            <p class="exito">Procedimiento ejecutado con éxito.</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Director</th>
+                                        <th>Año</th>
+                                        <th>Género</th>
+                                        <th>Puntuación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${filas}</tbody>
+                            </table>
+                        `
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>
