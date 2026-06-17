@@ -2,114 +2,142 @@
 <html lang="es">
     <head>
         <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Procedimiento - Películas destacadas</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
         <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
             body {
-                background: #f5f6fa;
-                font-family: Arial, sans-serif;
-                color: #2d3436;
-                margin: 0;
+                background: #f0eff8;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                color: #1a1825;
+                min-height: 100vh;
             }
             nav {
-                background: #2d3436;
-                color: #fff;
-                padding: 1rem 2rem;
+                background: #1a1825;
+                padding: 0 2rem;
+                height: 54px;
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: space-between;
             }
-            nav a {
+            .nav-brand {
+                display: flex;
+                align-items: center;
+                gap: 8px;
                 color: #fff;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .nav-brand i { font-size: 20px; color: #9d96f0; }
+            .nav-links { display: flex; gap: 4px; }
+            .nav-links a {
+                color: rgba(255,255,255,0.6);
                 text-decoration: none;
-                margin-left: 1.2rem;
+                font-size: 13px;
+                padding: 6px 12px;
+                border-radius: 8px;
+                transition: background 0.15s, color 0.15s;
             }
-            nav a:hover {
-                color: #74b9ff;
-            }
+            .nav-links a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+            .nav-links a.active { color: #fff; }
             .contenedor {
-                max-width: 900px;
+                max-width: 960px;
                 margin: 2rem auto;
-                padding: 0 1rem;
+                padding: 0 1.5rem;
             }
+            h1 { font-size: 22px; font-weight: 500; margin-bottom: 1.25rem; }
             .descripcion {
+                border-left: 3px solid #534AB7;
                 background: #fff;
-                border-left: 4px solid #3498db;
-                padding: 1rem 1.2rem;
-                border-radius: 4px;
+                border-radius: 0 10px 10px 0;
+                padding: 1rem 1.25rem;
+                font-size: 14px;
+                color: #6b6884;
+                line-height: 1.6;
                 margin-bottom: 1.5rem;
-                font-size: 0.95rem;
             }
+            .descripcion strong { color: #1a1825; font-weight: 500; }
             button {
-                background: #27ae60;
+                background: #27924a;
                 color: #fff;
                 border: none;
-                padding: 0.8rem 1.5rem;
-                border-radius: 4px;
-                font-size: 1rem;
+                border-radius: 8px;
+                padding: 10px 20px;
+                font-size: 14px;
+                font-weight: 500;
                 cursor: pointer;
-                margin-bottom: 1rem;
+                margin-bottom: 1.5rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: background 0.2s;
             }
-            button:hover {
-                background: #1e8449;
-            }
+            button:hover { background: #1e7a3d; }
             .resultado {
                 background: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                padding: 1rem 1.2rem;
-                min-height: 2rem;
+                border: 1px solid #e4e2f5;
+                border-radius: 14px;
+                padding: 1.25rem 1.5rem;
+                box-shadow: 0 2px 12px rgba(83,74,183,0.07);
             }
             .exito {
-                color: #27ae60;
-                font-weight: 600;
+                font-size: 13px;
+                font-weight: 500;
+                color: #27924a;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 6px;
             }
-            .error {
-                color: #e74c3c;
-                font-weight: 600;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 0.5rem;
-            }
+            .error { color: #c0392b; font-weight: 600; font-size: 13px; }
+            table { width: 100%; border-collapse: collapse; font-size: 13px; }
             th {
                 text-align: left;
-                border-bottom: 2px solid #ddd;
-                padding: 0.3rem;
+                font-weight: 500;
+                color: #1a1825;
+                padding: 8px 0;
+                border-bottom: 1px solid #e4e2f5;
             }
             td {
-                padding: 0.3rem;
+                padding: 9px 0;
+                color: #6b6884;
+                border-bottom: 1px solid #f0eff8;
             }
+            tr:last-child td { border-bottom: none; }
+            td:first-child { color: #1a1825; font-weight: 500; }
+            .score-pill {
+                display: inline-block;
+                background: #EAF3DE;
+                color: #3B6D11;
+                font-size: 12px;
+                font-weight: 500;
+                padding: 2px 8px;
+                border-radius: 99px;
+            }
+            .pending { color: #6b6884; font-size: 14px; }
         </style>
     </head>
     <body>
         <nav>
-            <span>🎬 Catálogo de películas</span>
-            <div>
+            <div class="nav-brand"><i class="ti ti-movie"></i>Catálogo de películas</div>
+            <div class="nav-links">
                 <a href="/peliculas">Items</a>
-                <a href="/procedimiento">Procedimiento</a>
+                <a href="/procedimiento" class="active">Procedimiento</a>
                 <a href="/cerrar-sesion">Cerrar sesión</a>
             </div>
         </nav>
 
         <div class="contenedor">
             <h1>Procedimiento: películas destacadas</h1>
-
             <p class="descripcion">
-                Este procedimiento recorre el listado de películas y
-                devuelve únicamente aquellas cuya <strong>puntuación es mayor
-                a 8.7</strong>, ordenadas de mayor a menor puntuación.
+                Este procedimiento recorre el listado de películas y devuelve únicamente aquellas cuya
+                <strong>puntuación es mayor a 8.7</strong>, ordenadas de mayor a menor puntuación.
                 Hacé clic en el botón para ejecutarlo.
             </p>
-
-            <button id="boton">Ejecutar procedimiento</button>
-
+            <button id="boton"><i class="ti ti-player-play"></i>Ejecutar procedimiento</button>
             <div class="resultado" id="resultado">
-                <p>Todavía no se ejecutó el procedimiento.</p>
+                <p class="pending">Todavía no se ejecutó el procedimiento.</p>
             </div>
         </div>
 
@@ -118,56 +146,33 @@
             const resultado = document.getElementById('resultado')
 
             boton.addEventListener('click', () => {
-                resultado.innerHTML = '<p>Ejecutando...</p>'
-
-                // Endpoint de procedimiento: está fuera del esquema /api/v1/
-                // a propósito, porque no respeta los principios de rutas REST
-                // (no representa un recurso, sino una acción).
+                resultado.innerHTML = '<p class="pending">Ejecutando...</p>'
                 fetch('/peliculas/destacadas').then((response) => {
-                    if (response.status === 401) {
-                        window.location.href = '/login'
-                        return
-                    }
-
-                    if (!response.ok) {
-                        resultado.innerHTML = '<p class="error">El procedimiento no se ejecutó correctamente.</p>'
-                        return
-                    }
+                    if (response.status === 401) { window.location.href = '/login'; return }
+                    if (!response.ok) { resultado.innerHTML = '<p class="error">El procedimiento no se ejecutó correctamente.</p>'; return }
 
                     response.json().then((cuerpo) => {
                         const datos = cuerpo.datos
-
                         if (!datos || datos.length === 0) {
                             resultado.innerHTML = `
-                                <p class="exito">Procedimiento ejecutado con éxito.</p>
-                                <p>No se encontraron películas destacadas (puntuación > 8.7).</p>
+                                <p class="exito"><i class="ti ti-circle-check"></i>Procedimiento ejecutado con éxito.</p>
+                                <p class="pending">No se encontraron películas destacadas (puntuación > 8.7).</p>
                             `
                             return
                         }
-
-                        // Armamos una fila de tabla por cada película destacada
                         const filas = datos.map((pelicula) => `
                             <tr>
                                 <td>${pelicula.titulo}</td>
                                 <td>${pelicula.director}</td>
                                 <td>${pelicula.año}</td>
                                 <td>${pelicula.genero}</td>
-                                <td>${pelicula.puntuacion}</td>
+                                <td><span class="score-pill">${pelicula.puntuacion}</span></td>
                             </tr>
                         `).join('')
-
                         resultado.innerHTML = `
-                            <p class="exito">Procedimiento ejecutado con éxito.</p>
+                            <p class="exito"><i class="ti ti-circle-check"></i>Procedimiento ejecutado con éxito.</p>
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Título</th>
-                                        <th>Director</th>
-                                        <th>Año</th>
-                                        <th>Género</th>
-                                        <th>Puntuación</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Título</th><th>Director</th><th>Año</th><th>Género</th><th>Puntuación</th></tr></thead>
                                 <tbody>${filas}</tbody>
                             </table>
                         `

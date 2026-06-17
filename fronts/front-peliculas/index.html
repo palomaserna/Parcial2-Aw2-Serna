@@ -2,67 +2,93 @@
 <html lang="es">
     <head>
         <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Películas</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
         <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
             body {
-                background: #f5f6fa;
-                font-family: Arial, sans-serif;
-                color: #2d3436;
-                margin: 0;
+                background: #f0eff8;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                color: #1a1825;
+                min-height: 100vh;
             }
             nav {
-                background: #2d3436;
-                color: #fff;
-                padding: 1rem 2rem;
+                background: #1a1825;
+                padding: 0 2rem;
+                height: 54px;
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: space-between;
             }
-            nav a {
+            .nav-brand {
+                display: flex;
+                align-items: center;
+                gap: 8px;
                 color: #fff;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .nav-brand i { font-size: 20px; color: #9d96f0; }
+            .nav-links { display: flex; gap: 4px; }
+            .nav-links a {
+                color: rgba(255,255,255,0.6);
                 text-decoration: none;
-                margin-left: 1.2rem;
+                font-size: 13px;
+                padding: 6px 12px;
+                border-radius: 8px;
+                transition: background 0.15s, color 0.15s;
             }
-            nav a:hover {
-                color: #74b9ff;
-            }
+            .nav-links a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+            .nav-links a.active { color: #fff; }
             .contenedor {
-                max-width: 900px;
+                max-width: 960px;
                 margin: 2rem auto;
-                padding: 0 1rem;
+                padding: 0 1.5rem;
             }
+            h1 { font-size: 22px; font-weight: 500; margin-bottom: 1.5rem; }
             .lista {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                gap: 1rem;
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 12px;
             }
             .tarjeta {
                 background: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                padding: 1rem 1.2rem;
+                border: 1px solid #e4e2f5;
+                border-radius: 14px;
+                padding: 1rem 1.25rem;
                 text-decoration: none;
-                color: #2d3436;
+                color: #1a1825;
+                display: block;
+                transition: box-shadow 0.15s, transform 0.15s;
             }
-            .tarjeta h3 {
-                margin: 0 0 0.4rem 0;
+            .tarjeta:hover { box-shadow: 0 4px 18px rgba(83,74,183,0.12); transform: translateY(-2px); }
+            .tarjeta h3 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+            .tarjeta p { font-size: 12px; color: #6b6884; margin: 2px 0; }
+            .tarjeta-footer {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-top: 10px;
             }
-            .tarjeta p {
-                margin: 0.2rem 0;
-                font-size: 0.9rem;
-                color: #636e72;
+            .badge {
+                display: inline-block;
+                font-size: 11px;
+                font-weight: 500;
+                padding: 2px 10px;
+                border-radius: 99px;
+                background: #EEEDFE;
+                color: #534AB7;
             }
+            .score { font-size: 13px; font-weight: 500; color: #534AB7; }
+            .loading { color: #6b6884; font-size: 14px; }
         </style>
     </head>
     <body>
         <nav>
-            <span>🎬 Catálogo de películas</span>
-            <div>
-                <a href="/peliculas">Items</a>
+            <div class="nav-brand"><i class="ti ti-movie"></i>Catálogo de películas</div>
+            <div class="nav-links">
+                <a href="/peliculas" class="active">Items</a>
                 <a href="/procedimiento">Procedimiento</a>
                 <a href="/cerrar-sesion">Cerrar sesión</a>
             </div>
@@ -71,46 +97,27 @@
         <div class="contenedor">
             <h1>Listado de películas</h1>
             <div class="lista" id="lista">
-                <p>Cargando películas...</p>
+                <p class="loading">Cargando películas...</p>
             </div>
         </div>
 
         <script>
             const lista = document.getElementById('lista')
-
-            // Pedimos al backend todas las películas.
-            // Al ser same-origin (mismo dominio y puerto), la cookie
-            // "token" se envía automáticamente con la petición.
             fetch('/api/v1/peliculas').then((response) => {
-                // Si el token no es válido, el middleware del backend
-                // responde 401 y redirigimos al login manualmente
-                if (response.status === 401) {
-                    window.location.href = '/login'
-                    return
-                }
-
-                if (!response.ok) {
-                    lista.innerHTML = '<p>Ocurrió un error al cargar las películas.</p>'
-                    return
-                }
-
+                if (response.status === 401) { window.location.href = '/login'; return }
+                if (!response.ok) { lista.innerHTML = '<p class="loading">Ocurrió un error al cargar las películas.</p>'; return }
                 response.json().then((cuerpo) => {
                     const datos = cuerpo.datos
-
-                    if (!datos || datos.length === 0) {
-                        lista.innerHTML = '<p>No hay películas para mostrar.</p>'
-                        return
-                    }
-
-                    // Construimos una tarjeta por cada película.
-                    // Cada tarjeta enlaza a /pelicula?id=<id> usando query strings,
-                    // así la página de detalle sabe qué película mostrar.
+                    if (!datos || datos.length === 0) { lista.innerHTML = '<p class="loading">No hay películas para mostrar.</p>'; return }
                     lista.innerHTML = datos.map((pelicula) => `
                         <a class="tarjeta" href="/pelicula?id=${pelicula.id}">
                             <h3>${pelicula.titulo}</h3>
                             <p>Director: ${pelicula.director}</p>
-                            <p>Año: ${pelicula.año} · Género: ${pelicula.genero}</p>
-                            <p>Puntuación: ${pelicula.puntuacion}</p>
+                            <p>Año: ${pelicula.año}</p>
+                            <div class="tarjeta-footer">
+                                <span class="badge">${pelicula.genero}</span>
+                                <span class="score">★ ${pelicula.puntuacion}</span>
+                            </div>
                         </a>
                     `).join('')
                 })

@@ -2,66 +2,108 @@
 <html lang="es">
     <head>
         <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Detalle de película</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
         <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
             body {
-                background: #f5f6fa;
-                font-family: Arial, sans-serif;
-                color: #2d3436;
-                margin: 0;
+                background: #f0eff8;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                color: #1a1825;
+                min-height: 100vh;
             }
             nav {
-                background: #2d3436;
-                color: #fff;
-                padding: 1rem 2rem;
+                background: #1a1825;
+                padding: 0 2rem;
+                height: 54px;
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: space-between;
             }
-            nav a {
+            .nav-brand {
+                display: flex;
+                align-items: center;
+                gap: 8px;
                 color: #fff;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .nav-brand i { font-size: 20px; color: #9d96f0; }
+            .nav-links { display: flex; gap: 4px; }
+            .nav-links a {
+                color: rgba(255,255,255,0.6);
                 text-decoration: none;
-                margin-left: 1.2rem;
+                font-size: 13px;
+                padding: 6px 12px;
+                border-radius: 8px;
+                transition: background 0.15s, color 0.15s;
             }
-            nav a:hover {
-                color: #74b9ff;
-            }
+            .nav-links a:hover { background: rgba(255,255,255,0.08); color: #fff; }
             .contenedor {
-                max-width: 900px;
+                max-width: 960px;
                 margin: 2rem auto;
-                padding: 0 1rem;
+                padding: 0 1.5rem;
             }
             .volver {
-                display: inline-block;
-                margin-bottom: 1rem;
-                color: #3498db;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                color: #534AB7;
                 text-decoration: none;
+                font-size: 13px;
+                font-weight: 500;
+                margin-bottom: 1.25rem;
             }
+            .volver:hover { text-decoration: underline; }
+            h1 { font-size: 22px; font-weight: 500; margin-bottom: 1.25rem; }
             .detalle {
                 background: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                padding: 1.5rem 2rem;
-                max-width: 500px;
+                border: 1px solid #e4e2f5;
+                border-radius: 14px;
+                padding: 1.75rem 2rem;
+                max-width: 480px;
+                box-shadow: 0 2px 12px rgba(83,74,183,0.07);
             }
-            .detalle p {
-                margin: 0.4rem 0;
+            .detalle-fila {
+                display: flex;
+                align-items: baseline;
+                padding: 0.6rem 0;
+                border-bottom: 1px solid #f0eff8;
+                font-size: 14px;
             }
+            .detalle-fila:last-child { border-bottom: none; }
             .etiqueta {
-                font-weight: 600;
-                display: inline-block;
-                width: 130px;
+                font-weight: 500;
+                color: #6b6884;
+                font-size: 13px;
+                min-width: 120px;
             }
+            .badge {
+                display: inline-block;
+                font-size: 11px;
+                font-weight: 500;
+                padding: 2px 10px;
+                border-radius: 99px;
+                background: #EEEDFE;
+                color: #534AB7;
+            }
+            .score-pill {
+                display: inline-block;
+                background: #EAF3DE;
+                color: #3B6D11;
+                font-size: 12px;
+                font-weight: 500;
+                padding: 2px 10px;
+                border-radius: 99px;
+            }
+            .loading { color: #6b6884; font-size: 14px; }
         </style>
     </head>
     <body>
         <nav>
-            <span>🎬 Catálogo de películas</span>
-            <div>
+            <div class="nav-brand"><i class="ti ti-movie"></i>Catálogo de películas</div>
+            <div class="nav-links">
                 <a href="/peliculas">Items</a>
                 <a href="/procedimiento">Procedimiento</a>
                 <a href="/cerrar-sesion">Cerrar sesión</a>
@@ -69,55 +111,36 @@
         </nav>
 
         <div class="contenedor">
-            <a class="volver" href="/peliculas">&larr; Volver al listado</a>
+            <a class="volver" href="/peliculas"><i class="ti ti-arrow-left"></i> Volver al listado</a>
             <h1>Detalle de la película</h1>
             <div class="detalle" id="detalle">
-                <p>Cargando...</p>
+                <p class="loading">Cargando...</p>
             </div>
         </div>
 
         <script>
-            // Leemos el "id" desde la query string de la URL (?id=...)
-            // que se construyó en la página de Items.
             const parametros = new URLSearchParams(window.location.search)
             const id = parametros.get('id')
             const detalle = document.getElementById('detalle')
 
             if (!id) {
-                detalle.innerHTML = '<p>No se especificó un id de película.</p>'
+                detalle.innerHTML = '<p class="loading">No se especificó un id de película.</p>'
             } else {
-                // Construimos el endpoint con el id recibido por parámetro
                 fetch(`/api/v1/peliculas/${id}`).then((response) => {
-                    if (response.status === 401) {
-                        window.location.href = '/login'
-                        return
-                    }
-
-                    if (response.status === 400) {
-                        detalle.innerHTML = `<p>El id "${id}" no es válido.</p>`
-                        return
-                    }
-
-                    if (response.status === 404) {
-                        detalle.innerHTML = `<p>No se encontró una película con id ${id}.</p>`
-                        return
-                    }
-
-                    if (!response.ok) {
-                        detalle.innerHTML = '<p>Ocurrió un error al cargar la película.</p>'
-                        return
-                    }
+                    if (response.status === 401) { window.location.href = '/login'; return }
+                    if (response.status === 400) { detalle.innerHTML = `<p class="loading">El id "${id}" no es válido.</p>`; return }
+                    if (response.status === 404) { detalle.innerHTML = `<p class="loading">No se encontró una película con id ${id}.</p>`; return }
+                    if (!response.ok) { detalle.innerHTML = '<p class="loading">Ocurrió un error al cargar la película.</p>'; return }
 
                     response.json().then((cuerpo) => {
-                        const pelicula = cuerpo.datos[0]
-
+                        const p = cuerpo.datos[0]
                         detalle.innerHTML = `
-                            <p><span class="etiqueta">Título:</span> ${pelicula.titulo}</p>
-                            <p><span class="etiqueta">Director:</span> ${pelicula.director}</p>
-                            <p><span class="etiqueta">Año:</span> ${pelicula.año}</p>
-                            <p><span class="etiqueta">Género:</span> ${pelicula.genero}</p>
-                            <p><span class="etiqueta">Duración:</span> ${pelicula.duracion_min} min</p>
-                            <p><span class="etiqueta">Puntuación:</span> ${pelicula.puntuacion}</p>
+                            <div class="detalle-fila"><span class="etiqueta">Título</span><span>${p.titulo}</span></div>
+                            <div class="detalle-fila"><span class="etiqueta">Director</span><span>${p.director}</span></div>
+                            <div class="detalle-fila"><span class="etiqueta">Año</span><span>${p.año}</span></div>
+                            <div class="detalle-fila"><span class="etiqueta">Género</span><span class="badge">${p.genero}</span></div>
+                            <div class="detalle-fila"><span class="etiqueta">Duración</span><span>${p.duracion_min} min</span></div>
+                            <div class="detalle-fila"><span class="etiqueta">Puntuación</span><span class="score-pill">★ ${p.puntuacion}</span></div>
                         `
                     })
                 })
