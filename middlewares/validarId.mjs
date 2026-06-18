@@ -1,7 +1,5 @@
-// Middleware propio: valida que el parámetro ":id" de la ruta
-// sea un número válido ANTES de llegar al controlador.
-// Si no lo es, corta el flujo respondiendo 400 (Bad Request),
-// evitando una consulta innecesaria a la base de datos.
+// Middleware que valida que el parámetro de ruta (id) sea un número
+// válido. Si no, responde 400 sin llegar al controlador.
 export function validarIdNumerico(req, res, next) {
     const { id } = req.params
 

@@ -1,3 +1,5 @@
+// Crea y exporta un pool de conexiones a PostgreSQL
+// usando las variables de entorno definidas en el .env
 import pg from 'pg'
 import dotenv from 'dotenv'
 

@@ -18,8 +18,7 @@ export function verificarTokenPagina(req, res, next) {
 }
 
 // Middleware para proteger ENDPOINTS de la API.
-// Si no hay token válido, responde 401 en formato JSON
-// (acorde al criterio de respuestas de la API REST).
+// Si no, responde 401 en formato JSON
 export function verificarTokenAPI(req, res, next) {
     const token = req.cookies.token
 

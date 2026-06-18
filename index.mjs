@@ -17,12 +17,6 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 
-// Log simple de cada petición
-app.use((req, res, next) => {
-    console.log(req.method, req.url)
-    next()
-})
-
 // Rutas de usuarios (autenticacion, cerrar-sesion)
 app.use(rutasUsuarios)
 

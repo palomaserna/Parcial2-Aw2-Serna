@@ -71,21 +71,3 @@ export function obtenerDestacadas() {
         return pelicula.puntuacion > 8.7
     })
 }
-/*
-// Busca una película por su id
-export async function obtenerUno(id) {
-    const resultado = await pool.query(
-        'SELECT * FROM peliculas WHERE id = $1',
-        [id]
-    )
-    return resultado.rows
-}
-
-// Devuelve las películas con puntuación mayor a 8.7
-// (este es el endpoint de procedimiento del Parcial 1)
-export async function obtenerDestacadas() {
-    const resultado = await pool.query(
-        'SELECT * FROM peliculas WHERE puntuacion > 8.7 ORDER BY puntuacion DESC'
-    )
-    return resultado.rows
-}*/

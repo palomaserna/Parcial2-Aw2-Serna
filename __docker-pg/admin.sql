@@ -16,10 +16,3 @@ INSERT INTO usuarios (username, password_hash) VALUES
 ('admin', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36rQoeG6Lruj3mCq9q');
 
 
-SELECT password_hash, length(password_hash) FROM usuarios WHERE username = 'admin';
-
-UPDATE usuarios 
-SET password_hash = '$2b$10$WPpjULRmmaWHFuL0qkGsWO.3Sr33V3DVwmOuHKo0DjUpSajcDK4Bi' 
-WHERE username = 'admin';
-
-SELECT password_hash, length(password_hash) FROM usuarios WHERE username = 'admin';
