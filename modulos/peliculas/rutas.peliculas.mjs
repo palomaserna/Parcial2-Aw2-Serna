@@ -1,4 +1,5 @@
 import { Router } from 'express'
+// importa la función Router para crear un mini-servidor de rutas modular.
 import * as controlador from './controlador.peliculas.mjs'
 import { verificarTokenAPI } from '../../middlewares/verificarToken.mjs'
 import { validarIdNumerico } from '../../middlewares/validarId.mjs'
