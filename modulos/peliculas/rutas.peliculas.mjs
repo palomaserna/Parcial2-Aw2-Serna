@@ -10,6 +10,6 @@ rutasPeliculas.get('/api/v1/peliculas', verificarTokenAPI, controlador.obtenerPe
 
 rutasPeliculas.get('/api/v1/peliculas/:id', verificarTokenAPI, validarIdNumerico, controlador.obtenerPeliculaPorId)
 
-rutasPeliculas.get('/api/v1/peliculas/destacadas', verificarTokenAPI, controlador.obtenerDestacadas)
+rutasPeliculas.get('/api/v1/destacadas', verificarTokenAPI, controlador.obtenerDestacadas)
 
 export default rutasPeliculas
