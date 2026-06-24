@@ -16,9 +16,9 @@ export function verificarTokenPagina(req, res, next) {
 //  El return es clave acá — sin él, el código seguiría ejecutando 
 // las líneas de abajo aunque no haya token, e intentaría verificar un undefined.
 
-    jwt.verify(token, process.env.FIRMA, (error) => {
+    jwt.verify(token, process.env.JWT_FIRMA, (error) => {
         //Si hay token, intenta verificarlo. jwt.verify recibe el token, la clave secreta 
-        // (FIRMA, guardada en el .env) 
+        // (JWT_FIRMA, guardada en el .env) 
         // con la que se firmó originalmente, y un callback que se ejecuta con el resultado.
         if (error) {
             return res.redirect('/login')
@@ -46,7 +46,7 @@ export function verificarTokenAPI(req, res, next) {
 // (el JS del front) necesita un código de estado
 //  y un mensaje que pueda interpretar programáticamente, no una redirección HTML.
 
-    jwt.verify(token, process.env.FIRMA, (error) => {
+    jwt.verify(token, process.env.JWT_FIRMA, (error) => {
         if (error) {
             return res.status(401).json({
                 mensaje: 'Acceso no autorizado: token inválido o expirado',

@@ -25,3 +25,7 @@ const pool = new pg.Pool({
 })
 
 export default pool
+
+pool.connect()
+    .then(() => console.log('Conectado a la BD'))
+    .catch((error) => console.error('Error de conexión:', error.message))

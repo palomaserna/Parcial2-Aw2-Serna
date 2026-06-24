@@ -25,6 +25,7 @@ export async function autenticacion(req, res) {
         //aca verifica la contraseña ingresada (pass) contra el hash que devolvió la BD (resultado.password_hash).
         //el bcrypt.compare devuelve true si la contraseña es correcta, false si no lo es. Se guarda en verificado.
     } catch (error) {
+         console.log('ERROR:', error.message) //sacar
         return res.sendStatus(401)
     }
 
@@ -34,7 +35,7 @@ export async function autenticacion(req, res) {
             const datos = {
                 usuario: usuario
             }
-            const token = jwt.sign(datos, process.env.FIRMA, {
+            const token = jwt.sign(datos, process.env.JWT_FIRMA, {
                 expiresIn: '1h' //expira en una hora
             })
             //process.env.FIRMA → la clave secreta para firmar (del .env)
@@ -42,16 +43,18 @@ export async function autenticacion(req, res) {
             res.cookie('token', token, {
                 //Crea la cookie con el token adentro.
                 httpOnly: true, // el JS del navegador no puede leerla (protege contra robos)
-                secure: true, // solo se envía por HTTPS (protege contra robos)
+                secure: false, // solo se envía por HTTPS (protege contra robos)
                 sameSite: 'Strict', //no se envía si el pedido viene de otro sitio
                 maxAge: 24 * 60 * 60 * 1000 //la cookie dura 24 horas (en milisegundos)
             })
 
             res.redirect('/peliculas') //si va todo bien, redirige a la página de películas
         } catch (error) {
+            console.error('Error generando token:', error.message)
             res.sendStatus(401)
         }
     } else {
+         console.log('Contraseña incorrecta')
         res.sendStatus(401)
     }
 }

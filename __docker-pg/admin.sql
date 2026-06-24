@@ -13,6 +13,5 @@ CREATE TABLE usuarios (
 -- Insertar datos
 -- Usuario: admin | Contraseña: admin123 (hash generado con bcrypt)
 INSERT INTO usuarios (username, password_hash) VALUES
-('admin', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36rQoeG6Lruj3mCq9q');
-
+('admin', '$2b$10$vDlYIwMYoXD3S4lhszeBNOoQUdm9DNWEC5AA/Le0VVIAy3JwzTA3e');
 
